@@ -1,0 +1,12 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int main (){
+    int a;
+    cin>>a;
+
+    if(a<=18){cout << a+5;}
+    else {cout << a-24+5;}
+
+    return  0;
+}
