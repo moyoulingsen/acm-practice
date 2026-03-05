@@ -17,7 +17,7 @@ bool f(string s){
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    int n;cin>>n;cin.ignore();
+    int n;cin>>n;cin.ignore();//这里要清除掉
     
     
     
