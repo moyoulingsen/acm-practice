@@ -27,7 +27,7 @@ int main() {
 
     for (int i = 1; i < n; i++) {
         for (int j = i + 1; j <= n; j++) {
-            cin >> c[i][j];
+            cin >> c[i][j];//////////////模拟讲究的就是模拟的精确。
         }
     }
 
