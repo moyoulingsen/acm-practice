@@ -13,7 +13,8 @@ int main() {
     int ans = a[1]; int cur=a[1];
     
     for(int i =2 ;i<=n;i++){
-        cur = max(a[i], cur+a[i]);
+        cur = max(a[i], cur+a[i]);//以第 i 个位置结尾的连续子数组的最大和
+        ////////////////////////////这是一个动态优化的空间优化
         ans = max(cur,ans);
     }
 
