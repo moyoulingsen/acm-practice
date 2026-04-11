@@ -103,7 +103,7 @@ void solve() {
 
 
 
-    }
+    }ss
     cout << "impossible" << endl;
 
 }
