@@ -5,22 +5,32 @@ using namespace std;
 #define int long long
 #define pii array<int, 2>
 #define endl "\n"
+#define rep(i, a, b) for (int i = (a); i < (b); ++i)
 
 void solve() {
-    ull n ; cin>>n;
+    int n,m;
+    cin>>n>>m;
 
-    ull sum = 10;
-    for(ull i =0;i<n-1;i++){
-        sum = sum*10+sum; 
+    int x = m/n;
+    int ans = 0;
+    if(x==2)cout<<"NO\n";
+    else {rep(i,1,x+1){
+        if(m%(n*i)!=0){
+            ans = 1;
+            break;
+        }
+
     }
-    cout << sum ;
+     cout<< ((ans)?"YES\n":"NO\n");
+}
+   
 }
 
 signed main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    int t = 1;
+    int t;
     cin >> t;
     for (int i = 0; i < t; i++) {
         solve();

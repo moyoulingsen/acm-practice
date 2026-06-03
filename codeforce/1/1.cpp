@@ -8,29 +8,33 @@ using namespace std;
 #define rep(i, a, b) for (int i = (a); i < (b); ++i)
 
 void solve() {
-    int n,m;
-    cin>>n>>m;
+    int n,a,b;
+    cin>>n>>a>>b;
 
-    int x = m/n;
-    int ans = 0;
-    if(x==2)cout<<"NO\n";
-    else {rep(i,1,x+1){
-        if(m%(n*i)!=0){
-            ans = 1;
-            break;
-        }
-
-    }
-     cout<< ((ans)?"YES\n":"NO\n");
-}
-   
+   if(a>=b){
+    if(n%3==0)cout<<n/3*b<<endl;
+    else cout<<n/3*b +b<<endl;
+   }
+   else if(a<b&&b<=2*a){
+       if(n%3==0)cout<<n/3*b<<endl;
+       else if(n%3==1)cout<< n/3*b+a<<endl;
+       else cout<<n/3*b+b<<endl;
+   }
+   else if(2*a<b&&3*a>=b){
+       if(n%3==0)cout<<n/3*b<<endl;
+       else if(n%3==1)cout<< n/3*b+a<<endl;
+       else cout<<n/3*b+2*a<<endl;
+   }
+   else{
+        cout<<n*a<<endl;
+   }
 }
 
 signed main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    int t;
+    int t ;
     cin >> t;
     for (int i = 0; i < t; i++) {
         solve();

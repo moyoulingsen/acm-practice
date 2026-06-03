@@ -40,6 +40,7 @@ void solve() {
                 
             }
         }
+        
         rep(i,0,4){
             int nx = x+dx[i];
             int ny = y+dy[i];

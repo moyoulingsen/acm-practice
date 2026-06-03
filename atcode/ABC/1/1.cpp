@@ -5,15 +5,15 @@ using namespace std;
 #define int long long
 #define pii array<int, 2>
 #define endl "\n"
+#define rep(i, a, b) for (int i = (a); i < (b); ++i)
 
 void solve() {
-    ull n ; cin>>n;
+    string s;cin>>s;
+    int n;cin>>n;
 
-    ull sum = 10;
-    for(ull i =0;i<n-1;i++){
-        sum = sum*10+sum; 
+    rep(i,n,s.size()-n){
+        cout<<s[i];
     }
-    cout << sum ;
 }
 
 signed main() {
@@ -21,7 +21,7 @@ signed main() {
     cin.tie(0);
     cout.tie(0);
     int t = 1;
-    cin >> t;
+    //cin >> t;
     for (int i = 0; i < t; i++) {
         solve();
     }

@@ -13,35 +13,106 @@ void solve() {
     rep(i,0,n){
         cin>>arr[i];
     }
-    int l = 0, r = n, mexwf = 0;
-    while(l <= r){
-        int mid = (l + r) / 2;
-        multiset<int> s(arr.begin(), arr.end());
-        bool ok = true;
-
-        for(int x = mid - 1; x >= 0; --x){
-            auto it = s.find(x);
-            if(it != s.end()){
-                s.erase(it);
-                continue;
-            }
-            it = s.lower_bound(2 * x + 1);
-            if(it == s.end()){
-                ok = false;
-                break;
-            }
-            s.erase(it);
-        }
-
-        if(ok){
-            mexwf = mid;
-            l = mid + 1;
+    sort(arr.begin(),arr.end());
+    
+    int ans1 =0;
+    int r =n-1;
+    int l =0;
+    int rest =n;
+    while(rest>0){
+        if(arr[l] == ans1){
+            l++;
+            ans1++;
+            rest--;
         }
         else{
-            r = mid - 1;
+            if(arr[r]-ans1>ans1){
+               r--;
+               ans1++;
+               rest--;
+            }
+            else {
+                l++;
+                rest--;
+            }
+            
         }
     }
-    cout<<mexwf<<endl;
+    int ans2 = 0;
+     r =n-1;
+     l =0;
+     rest =n;
+    while(rest>0){
+        if(arr[l] == ans2){
+            l++;
+            ans2++;
+            rest--;
+        }
+        else{
+            if(arr[r]-ans2>ans2){
+               r--;
+               ans2++;
+               rest--;
+            }
+            else {
+                l++;
+                rest--;
+            }
+            
+        }
+    }
+
+    int ans3 = 0;
+     r =n-1;
+     l =0;
+     rest =n;
+    while(rest>0){
+        if(arr[r]-ans3>ans3){
+            r--;
+            ans3++;
+            rest--;
+        }
+        else{
+            if(arr[l] == ans3){
+                l++;
+            ans3++;
+            rest--;
+               
+            }
+            else {
+                r--;
+                rest--;
+            }
+            
+        }
+    }
+    int ans4 = 0;
+     r =n-1;
+     l =0;
+     rest =n;
+    while(rest>0){
+        if(arr[r]-ans4>ans4){
+            r--;
+            ans4++;
+            rest--;
+        }
+        else{
+            if(arr[l] == ans4){
+                l++;
+            ans4++;
+            rest--;
+               
+            }
+            else {
+                l++;
+                rest--;
+            }
+            
+        }
+    }
+
+    int ans = max(ans1,max(ans2,max(ans3,ans4)));
+    cout<<ans<<endl;
 }
 
 signed main() {

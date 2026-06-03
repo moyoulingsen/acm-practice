@@ -5,22 +5,30 @@ using namespace std;
 #define int long long
 #define pii array<int, 2>
 #define endl "\n"
+#define rep(i, a, b) for (int i = (a); i < (b); ++i)
 
 void solve() {
-    ull n ; cin>>n;
+    int n;cin>>n;
+    vector<int> arr(n);
+    rep(i,0,n)cin>>arr[i];
+    int ans = 1;
 
-    ull sum = 10;
-    for(ull i =0;i<n-1;i++){
-        sum = sum*10+sum; 
+    int lmmax =arr[0];
+
+    rep(i,1,n){
+       int k = arr[i]-arr[i-1];
+       if(k<0){
+          rmmax = arr[i];
+       }
+       
     }
-    cout << sum ;
+cout<<((ans==1)?"Yes\n":"No\n");
 }
-
 signed main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    int t = 1;
+    int t;
     cin >> t;
     for (int i = 0; i < t; i++) {
         solve();
