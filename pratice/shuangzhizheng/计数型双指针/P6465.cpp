@@ -1,3 +1,4 @@
+// P6465 [传送门题] Starry Sky
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -8,18 +9,8 @@ using namespace std;
 #define rep(i, a, b) for (int i = (a); i < (b); ++i)
 
 void solve() {
-    int n,q;
-    cin>>n>>q;
-
-    vector<int> arr(n);
-    vector<int> brr(n);
-    int num;
-    while(q--){
-        int x,a;cin>>x>>a;
-        if(x==1){
-
-        }
-    }
+    int n;cin>>n;
+    cout<<n;
 }
 
 signed main() {
