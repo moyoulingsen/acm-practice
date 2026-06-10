@@ -34,7 +34,7 @@ ll ans = 0;
             arr.push_back(it->second);
         }
         
-        
+
         for (ll i = 0; i < arr.size(); i++)
         {
             for (ll j = i + 1; j < arr.size(); j++)
