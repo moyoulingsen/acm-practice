@@ -1,0 +1,21 @@
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        // unorder_map(char,int) cnt;
+        unordered_map<char,int> cnt;
+        int ans = 0;
+        for(int left =0,right=0;right<s.size();right++){
+            // cnt(s[right])++;
+            cnt[s[right]]++;
+            while(cnt[s[right]]>1){
+                cnt[s[left]]--;
+                //left怎么可以忘记移动嗯？
+                //right自然自己移动了
+                left++;
+            }
+
+            ans = max(ans,right -left+1);
+        }
+    return ans;
+    }
+};

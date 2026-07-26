@@ -1,0 +1,42 @@
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int,int> hs;
+        vector<int> ans;
+        for(int i=0;i<nums.size();i++){
+            auto it = hs.find(target-nums[i]);
+            if(it != hs.end()){
+                ans.push_back(i);
+                ans.push_back(it->second);
+            }
+            hs[nums[i]]=i;
+        }
+        return ans;
+    }
+};
+
+
+
+
+
+
+
+
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int, int> hs;
+        for (int i = 0; i < nums.size(); i++) {
+            auto it = hs.find(target - nums[i]);
+            if (it != hs.end()) {
+                // ans.push_back(i);
+                // ans.push_back(it->second);
+                return {i, it->second};
+            }
+            hs[nums[i]] = i; // 这里是储存下标和数字的
+        }
+        return {};
+    }
+    // 为什么要先 find，再存当前数？
+    // 因为不能让同一个元素用两次。
+};

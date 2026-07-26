@@ -26,6 +26,7 @@ int main() {
             arr.emplace_back(k*v[i],k*wr[i]);
             cnt-=k;
         }
+        //非常精妙，这里退出循环了
         if(cnt > 0){
             arr.emplace_back(cnt*v[i],cnt *wr[i]);   //////////////////////////非常精妙的使用后面的那一个
         }

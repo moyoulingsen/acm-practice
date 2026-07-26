@@ -1,0 +1,21 @@
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {
+        
+        int n = nums.size();
+        int sum =1;
+        // if(n==1) return nums[0];//特判单解
+        int ans = nums[0];//特判第一个，特别是第一个是答案的话
+        vector<int> mx(n+1),mn(n+1);
+        mx[1] =nums[0];
+        mn[1] =nums[0];
+        for(int i =2;i<n+1;i++){
+            int x= nums[i-1];
+            mx[i]=  max({mx[i-1]*x,x,mn[i-1]*x});
+            mn[i]=  min({mx[i-1]*x,x,mn[i-1]*x});
+            ans = max(mx[i],ans);//需要计算乘积最大
+        }
+        // return mx[n];
+        return ans;
+    }
+};
