@@ -1,139 +1,179 @@
 # CF 1096 G - Drowning
 
-**题目链接**：<https://codeforces.com/problemset/problem/1096/G>
+**真实题号**：CF 2227 G
 
-**题型**：FFT / NTT / 卷积计数
+**题目链接**：<https://codeforces.com/problemset/problem/2227/G>
 
-**难度体感**：高于一般紫名稳定范围，但很值得知道这类题的存在。
+**题型**：前缀和 / 树状数组 / 交错和
 
----
-
-## 为什么把它也纳入
-
-你说的是“紫名以下应该会”的范围，而这类题虽然不一定要求你现在就能裸手秒掉，
-但至少要建立识别能力：
-
-- 一看到大规模卷积计数，
-- 就要想到 FFT / NTT / 生成函数。
-
-这本身就是实力边界的一部分。
+**难度体感**：2000，关键是找到操作不变量。
 
 ---
 
-## 识别信号
+## 题意压缩
 
-当题目出现下面这些特征时，要立刻警觉：
+要统计满足条件的子数组数量。
 
-- 统计两两和 / 差 / 配对数量；
-- 朴素做法是双重枚举；
-- 值域较大但可作为下标；
-- 需要批量求很多“和为 x”的答案。
-
-这就是卷积味道。
+经过题目中的操作，一个子数组最终能被缩成一个正数，就算合法。
 
 ---
 
-## 常见思路
+## 关键观察 1：长度必须是奇数
 
-1. 把一个集合出现情况写成多项式；
-2. 多项式相乘后，系数表示配对数量；
-3. 需要快速相乘时，用 FFT / NTT。
+每次操作都会让长度减少 `2`。
+
+所以最后能缩成一个元素的子数组，初始长度必须是奇数。
+
+---
+
+## 关键观察 2：交错和不变
+
+对区间 `[l,r]` 定义交错和：
+
+\[
+a_l-a_{l+1}+a_{l+2}-a_{l+3}+\cdots
+\]
+
+题目操作不会改变这个交错和。
+
+最后只剩下一个数时，这个数就是原区间的交错和。
+
+因此合法条件等价于：
+
+- 区间长度为奇数；
+- 区间交错和大于 `0`。
+
+---
+
+## 用前缀交错和转化
+
+定义：
+
+\[
+pref_i=a_1-a_2+a_3-a_4+\cdots+(-1)^{i-1}a_i
+\]
+
+对区间 `[l,r]`：
+
+- 如果 `l` 是奇数，交错和为 `pref[r]-pref[l-1]`，需要 `pref[r] > pref[l-1]`；
+- 如果 `l` 是偶数，交错和方向相反，需要 `pref[r] < pref[l-1]`。
+
+区间长度为奇数等价于 `l` 和 `r` 奇偶相同，也等价于 `l-1` 和 `r` 奇偶不同。
+
+扫描右端点 `r` 时：
+
+- 若 `r` 是奇数，对应 `l` 也是奇数，所以 `l-1` 是偶数，要数历史偶数下标中 `pref < pref[r]`；
+- 若 `r` 是偶数，对应 `l` 也是偶数，所以 `l-1` 是奇数，要数历史奇数下标中 `pref > pref[r]`。
+
+---
+
+## 数据结构
+
+把所有 `pref` 离散化。
+
+用两个树状数组分别维护：
+
+- 偶数下标的历史 `pref`；
+- 奇数下标的历史 `pref`。
+
+每扫到一个 `r`，先统计答案，再把 `pref[r]` 加进对应奇偶的树状数组。
+
+---
+
+## 复杂度
+
+\[
+O(n\log n)
+\]
 
 ---
 
 ## 参考代码
 
-下面给一份 NTT 卷积模板，作为这类题的参考代码框架：
-
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
 
-const int MOD = 998244353;
-const int G = 3;
+using ll = long long;
 
-long long qpow(long long a, long long e) {
-    long long r = 1;
-    while (e) {
-        if (e & 1) r = r * a % MOD;
-        a = a * a % MOD;
-        e >>= 1;
-    }
-    return r;
-}
+struct Fenwick {
+    int n;
+    vector<int> bit;
 
-void ntt(vector<int> &a, bool invert) {
-    int n = (int)a.size();
-    for (int i = 1, j = 0; i < n; i++) {
-        int bit = n >> 1;
-        for (; j & bit; bit >>= 1) j ^= bit;
-        j ^= bit;
-        if (i < j) swap(a[i], a[j]);
+    Fenwick(int n = 0) { init(n); }
+
+    void init(int n_) {
+        n = n_;
+        bit.assign(n + 1, 0);
     }
 
-    for (int len = 2; len <= n; len <<= 1) {
-        long long wlen = qpow(G, (MOD - 1) / len);
-        if (invert) wlen = qpow(wlen, MOD - 2);
-        for (int i = 0; i < n; i += len) {
-            long long w = 1;
-            for (int j = 0; j < len / 2; j++) {
-                int u = a[i + j];
-                int v = (int)(a[i + j + len / 2] * w % MOD);
-                a[i + j] = u + v < MOD ? u + v : u + v - MOD;
-                a[i + j + len / 2] = u - v >= 0 ? u - v : u - v + MOD;
-                w = w * wlen % MOD;
-            }
-        }
+    void add(int idx, int val) {
+        for (; idx <= n; idx += idx & -idx) bit[idx] += val;
     }
 
-    if (invert) {
-        long long inv_n = qpow(n, MOD - 2);
-        for (int &x : a) x = (int)(x * inv_n % MOD);
+    int sum(int idx) const {
+        int res = 0;
+        for (; idx > 0; idx -= idx & -idx) res += bit[idx];
+        return res;
     }
-}
 
-vector<int> multiply(vector<int> a, vector<int> b) {
-    int n = 1;
-    while (n < (int)a.size() + (int)b.size()) n <<= 1;
-    a.resize(n);
-    b.resize(n);
-    ntt(a, false);
-    ntt(b, false);
-    for (int i = 0; i < n; i++) a[i] = 1LL * a[i] * b[i] % MOD;
-    ntt(a, true);
-    return a;
-}
+    int range_sum(int l, int r) const {
+        if (l > r) return 0;
+        return sum(r) - sum(l - 1);
+    }
+};
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int n, m;
-    cin >> n >> m;
-    vector<int> A(m + 1), B(m + 1);
-    for (int i = 0; i <= m; ++i) cin >> A[i];
-    for (int i = 0; i <= m; ++i) cin >> B[i];
+    int T;
+    cin >> T;
+    while (T--) {
+        int n;
+        cin >> n;
 
-    vector<int> C = multiply(A, B);
-    for (int i = 0; i <= 2 * m; ++i) cout << C[i] << ' ';
-    cout << '\n';
+        vector<ll> pref(n + 1, 0), values;
+        values.push_back(0);
+
+        for (int i = 1; i <= n; ++i) {
+            ll x;
+            cin >> x;
+            pref[i] = pref[i - 1] + (i & 1 ? x : -x);
+            values.push_back(pref[i]);
+        }
+
+        sort(values.begin(), values.end());
+        values.erase(unique(values.begin(), values.end()), values.end());
+
+        auto id = [&](ll x) {
+            return int(lower_bound(values.begin(), values.end(), x) - values.begin()) + 1;
+        };
+
+        int m = values.size();
+        Fenwick even(m), odd(m);
+        even.add(id(pref[0]), 1);
+
+        long long ans = 0;
+        for (int r = 1; r <= n; ++r) {
+            int pos = id(pref[r]);
+            if (r & 1) {
+                ans += even.sum(pos - 1);
+                odd.add(pos, 1);
+            } else {
+                ans += odd.range_sum(pos + 1, m);
+                even.add(pos, 1);
+            }
+        }
+
+        cout << ans << '\n';
+    }
     return 0;
 }
 ```
-
-> 这份代码是卷积题的标准 NTT 框架。你以后精修原题时，只需要把“如何把题目转成多项式系数”这一步补进去。
-
----
-
-## 这题放进 tutorial 的意义
-
-不是要求你现在立刻把实现背下来，
-而是让你以后看到类似题时，能第一时间识别：
-
-> 这不是普通计数，这是卷积计数。
 
 ---
 
 ## 一句话总结
 
-大规模“配对和/差计数”看到就要想到：**把集合写成多项式，再做卷积。**
+这题就是：**合法区间等价于“奇数长度 + 交错和为正”，然后用树状数组统计前缀交错和大小关系。**

@@ -1,81 +1,152 @@
-# CF 1103 F1 - Electrical Efficiency
+# CF 1103 F1 - Elections in Saransk (Easy Version)
 
-**题目链接**：<https://codeforces.com/problemset/problem/1103/F1>
+**真实题号**：CF 2236 F1
 
-**题型**：数学 / 图论 / 贡献统计
+**题目链接**：<https://codeforces.com/problemset/problem/2236/F1>
 
-**难度体感**：紫名范围内值得掌握的“先想公式再想代码”的题。
+**题型**：数论 / 质因数分解 / 组合计数
 
----
-
-## 为什么 F1 很值得写
-
-F1 通常是：
-
-- 和 F2 同核心；
-- 但数据范围更温和；
-- 适合先把思想吃透。
-
-所以刷题时，F1 非常适合作为 tutorial 的重点，因为它是“从不会到会”的最好台阶。
+**难度体感**：1700，关键是把 `lcm = product` 转成两两互质。
 
 ---
 
-## 这类题的典型打开方式
+## 题意压缩
 
-1. 先不要急着写数据结构。
-2. 先问：答案是不是某种总贡献和？
-3. 每个元素 / 边 / 点到底独立贡献了什么？
-4. F1 能不能先用稍慢但清楚的方法过。
+给定若干数 `a[i]`。
 
-如果 F1 能先想清楚，F2 往往只是：
+要求统计若干选择方案，使得选出来的数满足特定的 `lcm` 与乘积关系。
 
-- 再做优化；
-- 再换更强的数据结构；
-- 本质思路不会完全变。
+在 easy version 中，参数 `x=1`，条件可以化简为：
+
+\[
+lcm(p_1,p_2,\dots,p_n)=p_1p_2\cdots p_n
+\]
+
+---
+
+## 关键观察
+
+什么时候多个数的 `lcm` 等于它们的乘积？
+
+答案是：这些数必须两两互质。
+
+因为如果某个质因子同时出现在两个数里，那么乘积里会把它算两次，而 `lcm` 只会取最大指数，这样就不相等。
+
+所以每个质因子最多只能被分配给一个 `p_i`。
+
+---
+
+## 按质因子独立计数
+
+考虑某个质数 `q`。
+
+假设它在所有 `a[i]` 的质因数分解中总共出现了 `cnt[q]` 次。
+
+对于这个质因子，有这些选择：
+
+- 不使用它；
+- 使用其中某一次出现的位置。
+
+所以一共有：
+
+\[
+cnt[q]+1
+\]
+
+种选择。
+
+不同质因子之间互相独立，因此答案是：
+
+\[
+\prod_q (cnt[q]+1)
+\]
+
+对 `1e9+7` 取模。
+
+---
+
+## 思路步骤
+
+1. 预处理最小质因子 `spf`。
+2. 对每个 `a[i]` 分解质因数。
+3. 每出现一次质因子 `p`，就令 `cnt[p]++`。
+4. 最后把所有 `(cnt[p]+1)` 乘起来。
+
+---
+
+## 复杂度
+
+设最大值为 `V`。
+
+预处理：
+
+\[
+O(V\log\log V)
+\]
+
+每个数分解近似：
+
+\[
+O(\log V)
+\]
 
 ---
 
 ## 参考代码
 
-下面给一份“先枚举贡献、再做 F1 版本统计”的参考框架：
-
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
+
+const int MAXA = 500000;
+const long long MOD = 1000000007LL;
+
+int spf[MAXA + 1];
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int n;
-    cin >> n;
-    vector<long long> a(n);
-    for (int i = 0; i < n; ++i) cin >> a[i];
-
-    long long ans = 0;
-    for (int i = 0; i < n; ++i) {
-        for (int j = i + 1; j < n; ++j) {
-            ans += abs(a[i] - a[j]);
+    for (int i = 2; i <= MAXA; ++i) {
+        if (spf[i] == 0) {
+            for (long long j = i; j <= MAXA; j += i) {
+                if (spf[j] == 0) spf[j] = i;
+            }
         }
     }
 
-    cout << ans << '\n';
+    int T;
+    cin >> T;
+    while (T--) {
+        int n, x;
+        cin >> n >> x;
+
+        unordered_map<int, int> cnt;
+        for (int i = 0; i < n; ++i) {
+            int a;
+            cin >> a;
+            while (a > 1) {
+                int p = spf[a];
+                while (a % p == 0) {
+                    ++cnt[p];
+                    a /= p;
+                }
+            }
+        }
+
+        long long ans = 1;
+        for (auto [p, c] : cnt) {
+            ans = ans * (c + 1) % MOD;
+        }
+
+        cout << ans << '\n';
+    }
     return 0;
 }
 ```
-
-> 这份代码强调的是 F1 题最重要的思路：**先把贡献公式想明白，再接受较慢但清晰的实现。** 后续精修原题时，再把它替换成该题的精确版本。
-
----
-
-## 复盘时应重点掌握
-
-- 先推公式，再考虑实现；
-- F1 的暴力 / 半暴力解为什么成立；
-- F2 只是优化了哪一部分。
 
 ---
 
 ## 一句话总结
 
-F1 的价值在于：**先把答案结构想明白，再为 F2 做优化铺路。**
+这题就是：**`lcm = product` 等价于所有选出的数两两互质，所以每个质因子独立选择“不用或用一次”。**
