@@ -16,9 +16,11 @@ void solve() {
         cin>>arr[i].first>>arr[i].second;
     }
     
-    vector<int> dp(m+1);
+    // vector<int> dp(m+1);//这里应该是总花费，而不是总物品数量。
+    vector<int> dp(n+1);
     rep(i,1,m+1){
-        for(int j = n;j>arr[i].first;j--){
+        // for(int j = n;j>arr[i].first;j--)
+        for(int j = n;j>=arr[i].first;j--){//这里要小心啊，只要花费代价》=即可
             dp[j]=max(dp[j],dp[j-arr[i].first]+arr[i].first*arr[i].second);
         }
     }
